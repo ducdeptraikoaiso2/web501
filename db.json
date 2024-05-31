@@ -95,9 +95,9 @@
   "products": [
     {
       "id": 1,
-      "title": "iPhone 9",
+      "title": "iPho111",
       "description": "An apple mobile which is nothing like apple",
-      "price": 549,
+      "price": 54999,
       "discountPercentage": 12.96,
       "rating": 4.69,
       "stock": 94,

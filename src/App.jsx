@@ -3,17 +3,19 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import ShopPage from "./pages/ShopPage";
 import { useEffect, useState } from "react";
-import instance from "./axios";
+import instance, { getProducts } from "./axios";
 import DetailProduct from "./pages/DetailProduct";
 import DashBoard from "./pages/admin/DashBoard";
 import ProductAdd from "./pages/admin/ProductAdd";
+import ProductEdit from "./pages/admin/ProductEdit";
 
 function App() {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       try {
@@ -36,6 +38,20 @@ function App() {
       }
     })();
   };
+  const handleProductEdit = (data) => {
+    (async () => {
+      try {
+        await instance.patch(`/products/${data.id}`, data);
+        const newData = await getProducts();
+        setProducts(newData);
+        if (confirm("sua thanh cong?")) {
+          navigate("/admin");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    })();
+  };
   return (
     <>
       <Header />
@@ -51,6 +67,10 @@ function App() {
           <Route
             path="/admin/product-add"
             element={<ProductAdd onAdd={handleSubmit} />}
+          />
+          <Route
+            path="/admin/product-edit/:id"
+            element={<ProductEdit onEdit={handleProductEdit} />}
           />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="*" element={<NotFoundPage />} />
