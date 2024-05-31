@@ -1,7 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-
+import * as z from "zod";
+const productSchema = z.object({
+  title: z.string().min(6, { message: "Ten san pham phai co it nhat 6 ky tu" }),
+  price: z.number().min(0, { message: "Phai lon hon 0" }),
+  description: z.string().optional(),
+});
 const ProductAdd = ({ onAdd }) => {
   const navigate = useNavigate();
   const {
@@ -9,7 +15,7 @@ const ProductAdd = ({ onAdd }) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({ resolver: zodResolver(productSchema) });
   const onSubmit = (data) => {
     onAdd(data);
     if (confirm("Add product success, redirect to admin")) {
@@ -30,6 +36,9 @@ const ProductAdd = ({ onAdd }) => {
             id="title"
             {...register("title", { required: true })}
           />
+          {errors.title && (
+            <p className="text-danger">{errors.title.message}</p>
+          )}
         </div>
 
         <div className="mb-3">
@@ -40,8 +49,11 @@ const ProductAdd = ({ onAdd }) => {
             type="number"
             className="form-control"
             id="price"
-            {...register("price")}
+            {...register("price", { valueAsNumber: true })}
           />
+          {errors.price && (
+            <p className="text-danger">{errors.price.message}</p>
+          )}
         </div>
 
         <div className="mb-3">
